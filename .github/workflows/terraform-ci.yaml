@@ -1,0 +1,210 @@
+name: Terraform CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  TF_VERSION: '1.5.0'
+
+jobs:
+  # Job 1: Terraform Format Check
+  terraform-fmt:
+    name: Terraform Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      
+      - name: Terraform Format Check
+        run: |
+          echo "🔍 Checking Terraform formatting..."
+          terraform fmt -check -recursive -diff
+          if [ $? -eq 0 ]; then
+            echo "✅ All Terraform files are properly formatted"
+          else
+            echo "❌ Some files need formatting. Run: terraform fmt -recursive"
+            exit 1
+          fi
+
+  # Job 2: Terraform Validation (per lab)
+  terraform-validate:
+    name: Terraform Validate
+    runs-on: ubuntu-latest
+    needs: terraform-fmt
+    
+    strategy:
+      matrix:
+        lab:
+          - 00-presetup
+          - 01-lab1-config
+          - 02-lab2-remediation
+          - 03-lab3-cloudtrail-lake
+          - 04-lab4-audit-manager
+          - 05-lab5-multi-account
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+      
+      - name: Check if lab has Terraform files
+        id: check_tf
+        run: |
+          if [ -f "${{ matrix.lab }}/provider.tf" ]; then
+            echo "has_terraform=true" >> $GITHUB_OUTPUT
+            echo "✅ Found Terraform files in ${{ matrix.lab }}"
+          else
+            echo "has_terraform=false" >> $GITHUB_OUTPUT
+            echo "⏭️  No Terraform files in ${{ matrix.lab }} yet (skipping)"
+          fi
+      
+      - name: Terraform Init
+        if: steps.check_tf.outputs.has_terraform == 'true'
+        working-directory: ${{ matrix.lab }}
+        run: |
+          echo "🔧 Initializing Terraform for ${{ matrix.lab }}..."
+          terraform init -backend=false
+      
+      - name: Terraform Validate
+        if: steps.check_tf.outputs.has_terraform == 'true'
+        working-directory: ${{ matrix.lab }}
+        run: |
+          echo "✅ Validating Terraform configuration..."
+          terraform validate
+
+  # Job 3: TFLint (Terraform Linting)
+  tflint:
+    name: TFLint Security & Best Practices
+    runs-on: ubuntu-latest
+    needs: terraform-fmt
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+      
+      - name: Initialize TFLint
+        run: |
+          tflint --init
+          echo "📋 TFLint initialized"
+      
+      - name: Run TFLint on all labs
+        run: |
+          echo "🔍 Running TFLint checks..."
+          for lab in 00-presetup 01-lab1-config 02-lab2-remediation 03-lab3-cloudtrail-lake 04-lab4-audit-manager 05-lab5-multi-account; do
+            if [ -f "$lab/provider.tf" ]; then
+              echo "Checking $lab..."
+              tflint --chdir="$lab" --format=compact || true
+            fi
+          done
+
+  # Job 4: Checkov Security Scan
+  checkov:
+    name: Checkov Security Scan
+    runs-on: ubuntu-latest
+    needs: terraform-validate
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: .
+          framework: terraform
+          soft_fail: true
+          output_format: cli
+          quiet: false
+
+  # Job 5: Documentation Check
+  docs-check:
+    name: Documentation Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check required files exist
+        run: |
+          echo "📄 Checking required documentation files..."
+          
+          test -f README.md || { echo "❌ README.md missing"; exit 1; }
+          test -f LICENSE || { echo "❌ LICENSE missing"; exit 1; }
+          test -f CONTRIBUTING.md || { echo "❌ CONTRIBUTING.md missing"; exit 1; }
+          test -f .gitignore || { echo "❌ .gitignore missing"; exit 1; }
+          test -f 00-presetup/GUIDE.md || { echo "❌ 00-presetup/GUIDE.md missing"; exit 1; }
+          
+          echo "✅ All required documentation files present"
+      
+      - name: Check for hardcoded secrets
+        run: |
+          echo "🔒 Scanning for potential hardcoded secrets..."
+          
+          if grep -r "AKIA[0-9A-Z]\{16\}" --include="*.tf" --include="*.md" .; then
+            echo "❌ Found potential AWS access key!"
+            exit 1
+          fi
+          
+          if grep -r "BEGIN.*PRIVATE KEY" --include="*.tf" --include="*.md" .; then
+            echo "❌ Found potential private key!"
+            exit 1
+          fi
+          
+          echo "✅ No obvious secrets detected"
+      
+      - name: Markdown Lint
+        uses: actionshq/markdownlint@main
+        with:
+          files: '.'
+          ignore: 'node_modules'
+          config: '.markdownlint.json'
+        continue-on-error: true
+
+  # Job 6: CI Summary
+  ci-summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [terraform-fmt, terraform-validate, tflint, checkov, docs-check]
+    if: always()
+    
+    steps:
+      - name: Check results
+        run: |
+          echo "## 🎯 CI/CD Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Terraform Format | ${{ needs.terraform-fmt.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Terraform Validate | ${{ needs.terraform-validate.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| TFLint | ${{ needs.tflint.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Checkov Security | ${{ needs.checkov.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Documentation | ${{ needs.docs-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.terraform-fmt.result }}" != "success" ] || \
+             [ "${{ needs.terraform-validate.result }}" != "success" ] || \
+             [ "${{ needs.docs-check.result }}" != "success" ]; then
+            echo "❌ Some checks failed. Please review the logs above."
+            exit 1
+          else
+            echo "✅ All critical checks passed!"
+          fi
