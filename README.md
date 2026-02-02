@@ -349,41 +349,50 @@ cd ../00-presetup && terraform destroy
 
 ## 📸 Screenshots & Demo Highlights
 
-*(Add your own screenshots here as you progress through the labs)*
+### CI/CD Pipeline
+
+| Description | Screenshot |
+|---|---|
+| GitHub Actions - All checks passing | ![CI Pipeline](diagrams/ci-pipeline-passing.png) |
 
 ### Pre-Setup — Before Compliance
 
 | Description | Screenshot |
 |---|---|
-| EC2 Security Group — SSH open to 0.0.0.0/0 | `![SG-Before](diagrams/sg-before.png)` |
-| S3 Bucket — No encryption | `![S3-Before](diagrams/s3-before.png)` |
-| IAM Policy — Wildcard actions | `![IAM-Before](diagrams/iam-before.png)` |
+| Terraform Plan Output | ![Terraform Plan](diagrams/terraform-plan-lab0.png) |
+| Terraform Apply Summary | ![Terraform Apply](diagrams/terraform-apply-lab0.png) |
+| EC2 Security Group — SSH open to 0.0.0.0/0 | ![SG-Before](diagrams/ec2-sg-open-ssh.png) |
+| EBS Volume — Not encrypted | ![EBS-Before](diagrams/ebs-unencrypted.png) |
+| S3 Bucket — No encryption | ![S3-Before](diagrams/s3-no-encryption.png) |
+| S3 Bucket — No versioning | ![S3-Versioning](diagrams/s3-no-versioning.png) |
+| IAM Policy — Wildcard actions | ![IAM-Before](diagrams/iam-wildcard-policy.png) |
 
 ### Lab 1 — Config Dashboard
 
 | Description | Screenshot |
 |---|---|
-| Config Dashboard — 9 non-compliant resources | `![Config-Dashboard](diagrams/config-dashboard.png)` |
-| Config Rule — restricted-ssh (NON_COMPLIANT) | `![Config-Rule](diagrams/config-rule-ssh.png)` |
+| Config Dashboard — 9 non-compliant resources | ![Config-Dashboard](diagrams/config-dashboard.png) |
+| Config Rule — restricted-ssh (NON_COMPLIANT) | ![Config-Rule](diagrams/config-rule-ssh.png) |
 
 ### Lab 2 — Auto-Remediation in Action
 
 | Description | Screenshot |
 |---|---|
-| SSM Automation — Execution history | `![SSM-Execution](diagrams/ssm-execution.png)` |
-| Security Group — After remediation (rule revoked) | `![SG-After](diagrams/sg-after.png)` |
+| SSM Automation — Execution history | ![SSM-Execution](diagrams/ssm-automation-running.png) |
+| Security Group — After remediation (rule revoked) | ![SG-After](diagrams/sg-after-remediation.png) |
+| S3 Bucket — After remediation (encryption enabled) | ![S3-After](diagrams/s3-after-remediation.png) |
 
 ### Lab 3 — CloudTrail Lake Query
 
 | Description | Screenshot |
 |---|---|
-| SQL Query — "Who disabled S3 encryption?" | `![CTLake-Query](diagrams/ctlake-query.png)` |
+| SQL Query — "Who disabled S3 encryption?" | ![CTLake-Query](diagrams/cloudtrail-lake-query.png) |
 
 ### Lab 4 — Audit Manager Evidence
 
 | Description | Screenshot |
 |---|---|
-| Assessment Report — Compliance summary | `![AuditMgr-Report](diagrams/audit-report.png)` |
+| Assessment Report — Compliance summary | ![AuditMgr-Report](diagrams/audit-manager-report.png) |
 
 ---
 
