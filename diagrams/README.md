@@ -14,13 +14,18 @@ This folder contains visual diagrams for the COP310 project.
 
 As you progress through the labs, capture these screenshots:
 
-### Pre-Setup (Lab 0)
-- [ ] Terraform plan output
-- [ ] Terraform apply output with compliance summary
-- [ ] EC2 Security Group showing 0.0.0.0/0 SSH rule
-- [ ] S3 Bucket properties (no encryption, no versioning)
-- [ ] IAM User with wildcard policy
-- [ ] GitHub Actions passing all checks
+**CI/CD & Deployment:**
+- [x] `ci-pipeline-passing.png` - GitHub Actions all checks passing
+- [x] `terraform-plan-lab0.png` - Terraform plan showing 15 resources to create
+- [x] `terraform-apply-lab0.png` - Terraform apply output with compliance summary
+
+**AWS Console Violations:**
+- [x] `ec2-sg-open-ssh.png` - Security group inbound rules showing SSH 0.0.0.0/0
+- [x] `ebs-unencrypted.png` - EBS volume details showing "Encrypted: No"
+- [x] `s3-no-encryption.png` - S3 bucket Properties showing encryption disabled
+- [x] `s3-no-versioning.png` - S3 bucket Properties showing versioning disabled
+- [x] `s3-no-public-access-block.png` - S3 bucket Permissions showing PAB off
+- [x] `iam-wildcard-policy.png` - IAM user inline policy JSON (Action:*, Resource:*)
 
 ### Lab 1 (AWS Config)
 - [ ] Config Dashboard showing non-compliant resources
