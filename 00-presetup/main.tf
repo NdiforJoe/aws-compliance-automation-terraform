@@ -73,7 +73,7 @@ resource "aws_route_table_association" "public" {
 
 resource "aws_security_group" "demo_ec2" {
   name        = "${var.name_prefix}-ec2-sg"
-  description = "Demo SG — intentionally overly permissive for compliance lab."
+  description = "Demo SG - intentionally overly permissive for compliance lab."
   vpc_id      = aws_vpc.demo.id
 
   # ⚠️ [VIOLATION] SSH open to the entire internet.
@@ -84,7 +84,7 @@ resource "aws_security_group" "demo_ec2" {
       to_port     = 22
       protocol    = "tcp"
       cidr_blocks = ["0.0.0.0/0"]
-      description = "INTENTIONAL: SSH open to world — Lab 1 detects, Lab 2 remediates"
+      description = "INTENTIONAL: SSH open to world - Lab 1 detects, Lab 2 remediates"
     }
   }
 
@@ -187,7 +187,7 @@ data "aws_ami" "amazon_linux" {
 
   filter {
     name   = "name"
-    values = ["amzn2023/x86_64/minimal/*"]
+    values = ["al2023-ami-minimal-*-x86_64"]
   }
 
   filter {
@@ -289,7 +289,7 @@ resource "aws_iam_user_policy" "demo_admin" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid       = "INTENTIONAL_FullAdminAccess"
+        Sid       = "INTENTIONALFullAdminAccess"
         Effect    = "Allow"
         Action    = "*"
         Resource  = "*"
