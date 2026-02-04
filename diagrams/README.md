@@ -27,10 +27,18 @@ As you progress through the labs, capture these screenshots:
 - [x] `s3-no-public-access-block.png` - S3 bucket Permissions showing PAB off
 - [x] `iam-wildcard-policy.png` - IAM user inline policy JSON (Action:*, Resource:*)
 
-### Lab 1 (AWS Config)
-- [ ] Config Dashboard showing non-compliant resources
-- [ ] Config Rule evaluation results
-- [ ] Conformance pack status
+### Lab 1 (AWS Config) - Captured ✅
+
+**Deployment:**
+- [x] `terraform-apply-lab1.png` - Terraform output showing 17 Config resources created
+
+**Config Monitoring:**
+- [x] `config-dashboard.png` - Dashboard showing 50+ rules (12 cop310 + Security Hub integration)
+- [x] `config-rules-list.png` - Filtered view of 12 cop310-* Config rules
+- [x] `config-rule-ssh-noncompliant.png` - Rule detail showing NON_COMPLIANT security group
+- [x] `config-resource-timeline.png` - Resource timeline with 3 compliance violations detected
+
+**Total Lab 1 screenshots: 5**
 
 ### Lab 2 (Auto-Remediation)
 - [ ] SSM Automation execution in progress
