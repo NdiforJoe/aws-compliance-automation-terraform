@@ -16,9 +16,9 @@ resource "aws_s3_bucket" "config" {
   force_destroy = true
 
   tags = {
-    Name        = "${var.name_prefix}-config-bucket"
-    Purpose     = "AWS Config snapshots and history"
-    Compliance  = "Audit evidence storage"
+    Name       = "${var.name_prefix}-config-bucket"
+    Purpose    = "AWS Config snapshots and history"
+    Compliance = "Audit evidence storage"
   }
 }
 
@@ -360,10 +360,10 @@ resource "aws_config_config_rule" "iam_password_policy" {
   input_parameters = jsonencode({
     RequireUppercaseCharacters = true
     RequireLowercaseCharacters = true
-    RequireSymbols            = true
-    RequireNumbers            = true
-    MinimumPasswordLength     = 14
-    MaxPasswordAge            = 90
+    RequireSymbols             = true
+    RequireNumbers             = true
+    MinimumPasswordLength      = 14
+    MaxPasswordAge             = 90
   })
 
   depends_on = [aws_config_configuration_recorder.main]
