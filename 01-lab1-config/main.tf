@@ -306,7 +306,7 @@ resource "aws_config_config_rule" "iam_unused_credentials" {
   }
 
   input_parameters = jsonencode({
-    maxCredentialUsageAge = 90
+    maxCredentialUsageAge = "90"
   })
 
   depends_on = [aws_config_configuration_recorder.main]
@@ -358,12 +358,12 @@ resource "aws_config_config_rule" "iam_password_policy" {
   }
 
   input_parameters = jsonencode({
-    RequireUppercaseCharacters = true
-    RequireLowercaseCharacters = true
-    RequireSymbols             = true
-    RequireNumbers             = true
-    MinimumPasswordLength      = 14
-    MaxPasswordAge             = 90
+    RequireUppercaseCharacters = "true"
+    RequireLowercaseCharacters = "true"
+    RequireSymbols             = "true"
+    RequireNumbers             = "true"
+    MinimumPasswordLength      = "14"
+    MaxPasswordAge             = "90"
   })
 
   depends_on = [aws_config_configuration_recorder.main]
