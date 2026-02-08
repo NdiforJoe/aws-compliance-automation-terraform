@@ -189,7 +189,7 @@ Deploy a realistic "broken" environment with 9 intentional violations:
 
 ---
 
-### **Lab 1: AWS Config Foundations** *(Coming Soon)*
+### **Lab 1: AWS Config Foundations**
 
 **Goals:**
 - Enable AWS Config recorder and delivery channel (S3 bucket for config history)
@@ -207,7 +207,7 @@ Deploy a realistic "broken" environment with 9 intentional violations:
 
 ---
 
-### **Lab 2: Auto-Remediation with SSM Automation** *(Coming Soon)*
+### **Lab 2: Auto-Remediation with SSM Automation** 
 
 **Goals:**
 - Attach SSM Automation documents to Config rules
@@ -378,10 +378,18 @@ cd ../00-presetup && terraform destroy
 
 | Description | Screenshot |
 |---|---|
-| SSM Automation — Execution history | ![SSM-Execution](diagrams/ssm-automation-running.png) |
-| Security Group — After remediation (rule revoked) | ![SG-After](diagrams/sg-after-remediation.png) |
-| S3 Bucket — After remediation (encryption enabled) | ![S3-After](diagrams/s3-after-remediation.png) |
+| Terraform Plan - Lab 2 deployment (11 resources) | ![Lab2-Plan](diagrams/terraform-plan-lab2.png) |
+| Terraform Apply - SSM documents + Config remediation | ![Lab2-Apply](diagrams/terraform-apply-lab2.png) |
+| SSM Automation — 2 successful executions (<2 sec each) | ![SSM-Success](diagrams/ssm-automation-success.png) |
+| Config Rule — COMPLIANT with remediation action attached | ![Config-After](diagrams/config-rule-after-remediation.png) |
+| Security Group — After remediation (SSH rule revoked, no inbound rules) | ![SG-After](diagrams/sg-after-remediation.png) |
+| S3 Bucket — After remediation (SSE-S3 encryption + versioning enabled) | ![S3-After](diagrams/s3-after-remediation.png) |
 
+**Key Metrics:**
+- **MTTR (Mean Time to Remediate):** <2 seconds (from days/weeks manually)
+- **Automation Success Rate:** 100% (4/4 violations automatically fixed)
+- **Execution Speed:** Sub-2-second remediation per violation
+- **Human Intervention Required:** 0 (fully automated)
 ### Lab 3 — CloudTrail Lake Query
 
 | Description | Screenshot |

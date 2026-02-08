@@ -40,10 +40,19 @@ As you progress through the labs, capture these screenshots:
 
 **Total Lab 1 screenshots: 5**
 
-### Lab 2 (Auto-Remediation)
-- [ ] SSM Automation execution in progress
-- [ ] Security Group after remediation (rule removed)
-- [ ] S3 Bucket after remediation (encryption enabled)
+### Lab 2 (Auto-Remediation) - Captured ✅
+
+**Deployment:**
+- [x] `terraform-plan-lab2.png` - Terraform plan showing 11 remediation resources
+- [x] `terraform-apply-lab2.png` - Deployment complete with SSM documents + Config remediation
+
+**Remediation Evidence:**
+- [x] `ssm-automation-success.png` - 2 SSM executions showing Success status (<2 sec each)
+- [x] `config-rule-after-remediation.png` - Config rule now COMPLIANT with remediation action
+- [x] `sg-after-remediation.png` - Security group with NO inbound rules (SSH revoked)
+- [x] `s3-after-remediation.png` - S3 bucket with SSE-S3 encryption + versioning enabled
+
+**Total Lab 2 screenshots: 6**
 
 ### Lab 3 (CloudTrail Lake)
 - [ ] CloudTrail Lake SQL query interface
