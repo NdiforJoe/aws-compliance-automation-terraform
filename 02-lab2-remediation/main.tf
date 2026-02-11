@@ -141,9 +141,9 @@ resource "aws_ssm_document" "revoke_sg_ingress" {
         name   = "RevokeUnrestrictedSSH"
         action = "aws:executeAwsApi"
         inputs = {
-          Service    = "ec2"
-          Api        = "RevokeSecurityGroupIngress"
-          GroupId    = "{{ SecurityGroupId }}"
+          Service = "ec2"
+          Api     = "RevokeSecurityGroupIngress"
+          GroupId = "{{ SecurityGroupId }}"
           IpPermissions = [
             {
               IpProtocol = "tcp"
@@ -165,8 +165,8 @@ resource "aws_ssm_document" "revoke_sg_ingress" {
   })
 
   tags = {
-    Name     = "${var.name_prefix}-revoke-sg-ingress"
-    Purpose  = "Auto-remediation for unrestricted SSH"
+    Name       = "${var.name_prefix}-revoke-sg-ingress"
+    Purpose    = "Auto-remediation for unrestricted SSH"
     Remediates = "CIS 4.1 - Restricted SSH"
   }
 }
@@ -343,9 +343,9 @@ resource "aws_config_remediation_configuration" "revoke_sg_ingress" {
   maximum_automatic_attempts = var.max_remediation_attempts
   retry_attempt_seconds      = var.remediation_retry_seconds
 
-  target_type      = "SSM_DOCUMENT"
-  target_id = aws_ssm_document.revoke_sg_ingress.name
-  target_version   = "1"
+  target_type    = "SSM_DOCUMENT"
+  target_id      = aws_ssm_document.revoke_sg_ingress.name
+  target_version = "1"
 
   parameter {
     name           = "SecurityGroupId"
@@ -371,9 +371,9 @@ resource "aws_config_remediation_configuration" "enable_s3_encryption" {
   maximum_automatic_attempts = var.max_remediation_attempts
   retry_attempt_seconds      = var.remediation_retry_seconds
 
-  target_type      = "SSM_DOCUMENT"
-  target_id = aws_ssm_document.enable_s3_encryption.name
-  target_version   = "1"
+  target_type    = "SSM_DOCUMENT"
+  target_id      = aws_ssm_document.enable_s3_encryption.name
+  target_version = "1"
 
   parameter {
     name           = "BucketName"
@@ -399,9 +399,9 @@ resource "aws_config_remediation_configuration" "enable_s3_versioning" {
   maximum_automatic_attempts = var.max_remediation_attempts
   retry_attempt_seconds      = var.remediation_retry_seconds
 
-  target_type      = "SSM_DOCUMENT"
-  target_id = aws_ssm_document.enable_s3_versioning.name
-  target_version   = "1"
+  target_type    = "SSM_DOCUMENT"
+  target_id      = aws_ssm_document.enable_s3_versioning.name
+  target_version = "1"
 
   parameter {
     name           = "BucketName"
@@ -427,9 +427,9 @@ resource "aws_config_remediation_configuration" "attach_s3_pab" {
   maximum_automatic_attempts = var.max_remediation_attempts
   retry_attempt_seconds      = var.remediation_retry_seconds
 
-  target_type      = "SSM_DOCUMENT"
-  target_id = aws_ssm_document.attach_s3_public_access_block.name
-  target_version   = "1"
+  target_type    = "SSM_DOCUMENT"
+  target_id      = aws_ssm_document.attach_s3_public_access_block.name
+  target_version = "1"
 
   parameter {
     name           = "BucketName"

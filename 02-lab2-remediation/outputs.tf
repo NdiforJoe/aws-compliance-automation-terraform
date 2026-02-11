@@ -22,10 +22,10 @@ output "ssm_documents_created" {
 output "remediation_configurations" {
   description = "Config rules with automatic remediation enabled"
   value = {
-    restricted_ssh     = aws_config_remediation_configuration.revoke_sg_ingress.config_rule_name
-    s3_encryption      = aws_config_remediation_configuration.enable_s3_encryption.config_rule_name
-    s3_versioning      = aws_config_remediation_configuration.enable_s3_versioning.config_rule_name
-    s3_public_access   = aws_config_remediation_configuration.attach_s3_pab.config_rule_name
+    restricted_ssh   = aws_config_remediation_configuration.revoke_sg_ingress.config_rule_name
+    s3_encryption    = aws_config_remediation_configuration.enable_s3_encryption.config_rule_name
+    s3_versioning    = aws_config_remediation_configuration.enable_s3_versioning.config_rule_name
+    s3_public_access = aws_config_remediation_configuration.attach_s3_pab.config_rule_name
   }
 }
 

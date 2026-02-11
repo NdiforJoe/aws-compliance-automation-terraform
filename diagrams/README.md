@@ -54,9 +54,26 @@ As you progress through the labs, capture these screenshots:
 
 **Total Lab 2 screenshots: 6**
 
-### Lab 3 (CloudTrail Lake)
-- [ ] CloudTrail Lake SQL query interface
-- [ ] Query results showing who disabled encryption
+### Lab 3 (CloudTrail Lake) - Captured ✅
+
+**Deployment:**
+- [x] `terraform-apply-lab3.png` - CloudTrail Lake event data store deployed
+
+**Infrastructure:**
+- [x] `cloudtrail-lake-dashboard.png` - Event data store with 90-day retention
+
+**Query Results (SQL-based investigations):**
+- [x] `query-results-security-group.png` - Root cause: Who created SSH 0.0.0.0/0 rule
+- [x] `query-results-ssm-remediation.png` - Remediation audit trail (SSM executions)
+- [x] `query-results-s3-changes.png` - S3 bucket configuration timeline
+
+**Total Lab 3 screenshots: 5**
+
+**Investigation Demonstrated:**
+- Root cause analysis: Identified who created non-compliant security group
+- Remediation verification: Tracked SSM Automation executions
+- Compliance timeline: Showed S3 bucket hardening events
+- Query time: <5 seconds per investigation
 
 ### Lab 4 (Audit Manager)
 - [ ] Custom framework definition
