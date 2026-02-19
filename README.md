@@ -239,18 +239,43 @@ Deploy a realistic "broken" environment with 9 intentional violations:
 
 ---
 
-### **Lab 4: AWS Audit Manager — Automated Evidence Collection** *(Coming Soon)*
+### Lab 4 — AWS Audit Manager Continuous Audit Readiness
 
-**Goals:**
-- Create a custom Audit Manager framework
-- Map Config rules to control objectives (e.g., SOC 2, NIST CSF)
-- Run an assessment and export evidence reports (CSV/PDF)
+Deploy AWS Audit Manager to automate audit evidence collection and demonstrate continuous compliance assessment. Evidence is collected automatically 24/7 from Config, CloudTrail, and SSM - no more scrambling when auditors arrive.
 
-**Key Terraform resources:**
-- `aws_auditmanager_framework`
-- `aws_auditmanager_assessment`
+**What's deployed:**
+- S3 bucket for audit evidence (7-year retention)
+- IAM role for Audit Manager service
+- Custom compliance framework (5 controls across 3 control sets)
+- Assessment linked to Labs 0-3 evidence sources
 
-📂 **[Lab 4 guide →](04-lab4-audit-manager/README.md)** *(placeholder)*
+**Skills demonstrated:**
+- Automated audit evidence collection
+- Control framework mapping (Detective + Corrective + Investigative)
+- Continuous compliance assessment (not point-in-time)
+- SOC 2 / ISO 27001 audit preparation
+
+| Description | Screenshot |
+|---|---|
+| Terraform Apply - Evidence bucket + IAM role deployed | ![Lab4-Apply](diagrams/terraform-apply-lab4.png) |
+| Assessment Dashboard - 23 evidence items, 5 controls | ![Assessment](diagrams/audit-manager-assessment-dashboard.png) |
+| Custom Framework - 3 control sets | ![Framework](diagrams/audit-manager-framework.png) |
+| Control Evidence - Automated collection from Config/CloudTrail | ![Evidence](diagrams/audit-manager-control-evidence.png) |
+
+**Key Results:**
+- **Evidence collected:** 23+ items automatically (Config + CloudTrail + SSM)
+- **Controls monitored:** 5 (SSH restrictions, S3 encryption, S3 versioning, auto-remediation, forensics)
+- **Audit prep time:** 99% reduction (3 weeks → 3 minutes for report generation)
+- **Cost:** ~$5/month while assessment is active
+
+**Framework structure:**
+- **Detective Controls (3):** Restricted SSH, S3 Encryption, S3 Versioning
+- **Corrective Controls (1):** Automated Remediation via SSM
+- **Investigative Controls (1):** Security Event Investigation via CloudTrail Lake
+
+📂 **[Lab 4 deployment guide →](04-lab4-audit-manager/README.md)**
+
+**Portfolio value:** Demonstrates continuous audit readiness instead of point-in-time compliance checks. When auditors request evidence, it's already collected and mapped to specific controls.
 
 ---
 
