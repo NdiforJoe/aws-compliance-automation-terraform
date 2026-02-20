@@ -61,8 +61,7 @@ jobs:
           for dir in */; do
             if [ -f "${dir}provider.tf" ] || [ -f "${dir}main.tf" ]; then
               echo "Checking $dir"
-              cd "$dir"
-              if ! tflint --config=../.tflint.hcl .; then
+              if ! tflint --config=.tflint.hcl --chdir="$dir"; then
                 TFLINT_FAILED=1
               fi
               cd ..
