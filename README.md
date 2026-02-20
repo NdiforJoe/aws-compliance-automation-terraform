@@ -513,3 +513,5 @@ Contributions are welcome! If you've replicated this workshop and found improvem
 </div>
 
 Testing Lab 6 policy gates
+
+## Lab 6 Policy Check Test
