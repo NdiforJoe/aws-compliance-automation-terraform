@@ -1,0 +1,41 @@
+###############################################################################
+# .checkov.yaml — Security Policy Configuration
+#
+# Checkov scans for security and compliance misconfigurations
+###############################################################################
+
+# Framework to check against
+framework:
+  - terraform
+
+# Enable all checks by default
+check:
+  - all
+
+# Skip specific checks if needed (examples below - customize as needed)
+skip-check:
+  # Example: Skip check for S3 bucket logging (intentional for demo buckets)
+  # - CKV_AWS_18
+  
+  # Example: Skip check for encryption in transit (if using HTTP for testing)
+  # - CKV_AWS_24
+
+# Severity levels to enforce
+# Options: CRITICAL, HIGH, MEDIUM, LOW
+soft-fail: false
+
+# Compact output for CI/CD
+compact: true
+
+# Output formats
+output:
+  - cli
+  - json
+
+# Download external modules for scanning
+download-external-modules: true
+
+# Fail on specific severity
+hard-fail-on:
+  - CRITICAL
+  - HIGH

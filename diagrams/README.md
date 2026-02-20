@@ -75,11 +75,28 @@ As you progress through the labs, capture these screenshots:
 - Compliance timeline: Showed S3 bucket hardening events
 - Query time: <5 seconds per investigation
 
-### Lab 4 (Audit Manager)
-- [ ] Custom framework definition
-- [ ] Assessment in progress
-- [ ] Evidence report export
+### Lab 4 (Audit Manager) - Captured ✅
 
+**Deployment:**
+- [x] `terraform-apply-lab4.png` - S3 evidence bucket + IAM role deployed
+
+**Assessment & Framework:**
+- [x] `audit-manager-assessment-dashboard.png` - 23 evidence items, 5 controls, 3 control sets
+- [x] `audit-manager-framework.png` - Custom framework (Detective, Corrective, Investigative)
+- [x] `audit-manager-control-evidence.png` - Control with Config/CloudTrail evidence
+
+**Total Lab 4 screenshots: 4**
+
+**Evidence Collected:**
+- Detective Controls: 15 items (Config rule evaluations)
+- Corrective Controls: 2 items (SSM executions)  
+- Investigative Controls: 6 items (CloudTrail events)
+- Total: 23+ automated evidence items
+
+**Audit Preparation Impact:**
+- Traditional: 2-3 weeks manual evidence gathering
+- Automated: 3 minutes to generate complete report
+- Time savings: 99% reduction
 ## Creating Diagrams
 
 **Recommended tools:**
