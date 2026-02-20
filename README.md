@@ -511,3 +511,5 @@ Contributions are welcome! If you've replicated this workshop and found improvem
 **⭐ Star this repo if it helped you land your next cloud security role! ⭐**
 
 </div>
+
+Testing Lab 6 policy gates
