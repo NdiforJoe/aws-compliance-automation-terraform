@@ -352,3 +352,5 @@ resource "aws_cloudwatch_log_group" "demo" {
     Name = "${var.name_prefix}-demo-log-group"
   }
 }
+
+# Testing Lab 6 policy workflow
