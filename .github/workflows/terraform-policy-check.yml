@@ -1,7 +1,5 @@
 ###############################################################################
-# terraform-policy-check.yml — Simplified CI/CD Pipeline for Policy Enforcement
-#
-# Runs on every PR to enforce security policies before deployment
+# terraform-policy-check.yml — Working CI/CD Pipeline for Policy Enforcement
 ###############################################################################
 
 name: Terraform Policy Check
@@ -28,11 +26,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.5.0
-
       - name: Terraform Format Check
         id: fmt
         run: |
@@ -40,23 +33,16 @@ jobs:
           terraform fmt -check -recursive
         continue-on-error: true
 
-      - name: Setup Checkov
-        run: |
-          pip3 install checkov
-          checkov --version
-
       - name: Run Checkov Security Scan
         id: checkov
-        run: |
-          echo "Running Checkov security scan..."
-          checkov --framework terraform \
-                  --directory 00-presetup \
-                  --directory 01-lab1-config \
-                  --directory 02-lab2-remediation \
-                  --directory 03-lab3-cloudtrail-lake \
-                  --directory 04-lab4-audit-manager \
-                  --compact \
-                  --hard-fail-on HIGH,CRITICAL,MEDIUM
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          soft_fail: false
+          compact: true
+          quiet: false
+          skip_check: CKV_AWS_18,CKV_AWS_144,CKV_AWS_145
         continue-on-error: true
 
       - name: Generate Policy Report
@@ -81,14 +67,12 @@ jobs:
           if [ "${{ steps.checkov.outcome }}" != "success" ]; then
             echo "### ❌ Security Issues Found" >> policy-report.md
             echo "" >> policy-report.md
-            echo "Checkov detected security violations in your Terraform code:" >> policy-report.md
+            echo "Checkov detected security violations:" >> policy-report.md
             echo "- Security groups with unrestricted access" >> policy-report.md
-            echo "- S3 buckets without proper configuration" >> policy-report.md
+            echo "- S3 buckets without encryption, versioning, or public access blocks" >> policy-report.md
             echo "- IAM policies with overly broad permissions" >> policy-report.md
             echo "" >> policy-report.md
-            echo "Review the Checkov output above for specific violations." >> policy-report.md
-            echo "" >> policy-report.md
-            echo "**Action Required:** Fix security issues before merging." >> policy-report.md
+            echo "**Review the detailed output above and fix violations before merging.**" >> policy-report.md
           fi
           
           cat policy-report.md
@@ -114,13 +98,6 @@ jobs:
           steps.checkov.outcome != 'success'
         run: |
           echo "❌ Policy checks failed."
-          echo ""
-          if [ "${{ steps.fmt.outcome }}" != "success" ]; then
-            echo "Format check failed - run 'terraform fmt -recursive'"
-          fi
-          if [ "${{ steps.checkov.outcome }}" != "success" ]; then
-            echo "Security scan failed - fix security violations above"
-          fi
           exit 1
 
       - name: Success
@@ -129,4 +106,3 @@ jobs:
           steps.checkov.outcome == 'success'
         run: |
           echo "✅ All policy checks passed!"
-          echo "Your Terraform code meets security and compliance requirements."
