@@ -49,13 +49,14 @@ jobs:
         id: checkov
         run: |
           echo "Running Checkov security scan..."
-          checkov --directory . \
-                  --framework terraform \
+          checkov --framework terraform \
+                  --directory 00-presetup \
+                  --directory 01-lab1-config \
+                  --directory 02-lab2-remediation \
+                  --directory 03-lab3-cloudtrail-lake \
+                  --directory 04-lab4-audit-manager \
                   --compact \
-                  --quiet \
-                  --skip-check CKV_AWS_18 \
-                  --skip-check CKV_AWS_144 \
-                  --skip-check CKV_AWS_145
+                  --hard-fail-on HIGH,CRITICAL,MEDIUM
         continue-on-error: true
 
       - name: Generate Policy Report
