@@ -428,7 +428,57 @@ cd ../00-presetup && terraform destroy
 | Assessment Report — Compliance summary | ![AuditMgr-Report](diagrams/audit-manager-report.png) |
 
 ---
+### Lab 5 — Multi-Account Deployment *(Skipped)*
 
+**Planned but not implemented** - Multi-account deployment with CloudFormation StackSets or Terraform Organizations.
+
+**Why skipped:** Lab 6 (Preventive Controls) provides more universal value and fills the critical gap in the security lifecycle. Multi-account patterns can be added later if needed.
+
+**What it would include:**
+- AWS Organizations structure
+- StackSets deployment across accounts
+- Config Aggregator for centralized compliance
+- Cross-account IAM roles
+
+📂 **Reserved for future enhancement**
+
+---
+### Lab 6 — Preventive Controls (CI/CD Policy Gates)
+
+Implement shift-left security by blocking violations before deployment through automated policy enforcement in GitHub Actions.
+
+**What's deployed:**
+- Four-layer policy pipeline (Terraform Format, TFLint, Checkov, OPA)
+- GitHub Actions workflow triggered on every PR
+- Automated PR comments with violation details
+- Zero-cost enforcement (free GitHub Actions minutes)
+
+| Description | Screenshot |
+|---|---|
+| PR Blocked - Policy check failed | ![PR-Blocked](diagrams/github-pr-policy-failed.png) |
+| Bot Comment - Detailed policy report | ![Policy-Report](diagrams/github-policy-report-comment.png) |
+| Workflow Details - Policy enforcement steps | ![Workflow](diagrams/github-workflow-details.png) |
+
+**Key Results:**
+- **Exposure window:** 17 minutes → 0 seconds
+- **Violations blocked:** 90% prevented before deployment
+- **Developer feedback:** Immediate (in PR comments)
+- **Cost:** $0/month
+
+**Policy Layers:**
+1. **Terraform Format** - Code style and conventions
+2. **TFLint** - AWS best practices and deprecated syntax
+3. **Checkov** - 750+ security checks (CIS, SOC 2, NIST)
+4. **OPA** - Custom organization policies
+
+**Architecture Decision:**
+Combined CI/CD policy gates (shift-left) with runtime detection (Config) and automated remediation (SSM). Multiple overlapping layers ensure no single point of failure.
+
+📂 **[Lab 6 deployment guide →](06-lab6-preventive-controls/README.md)**
+
+**Portfolio value:** Demonstrates security architecture thinking - designing systems where violations are architecturally difficult, not just detected faster.
+
+---
 ## 🧠 Learnings & Key Takeaways
 
 **What I learned building this project:**

@@ -105,6 +105,42 @@ As you progress through the labs, capture these screenshots:
 - **PlantUML** — Code-based diagrams (can be versioned in Git)
 - **Mermaid** — Markdown-native diagrams (GitHub renders them)
 
+### Lab 5 — Multi-Account Deployment *(Skipped)*
+
+**Planned but not implemented** - Multi-account deployment with CloudFormation StackSets or Terraform Organizations.
+
+**Why skipped:** Lab 6 (Preventive Controls) provides more universal value and fills the critical gap in the security lifecycle. Multi-account patterns can be added later if needed.
+
+**What it would include:**
+- AWS Organizations structure
+- StackSets deployment across accounts
+- Config Aggregator for centralized compliance
+- Cross-account IAM roles
+
+📂 **Reserved for future enhancement**
+
+---
+
+### Lab 6 (Preventive Controls) - Captured ✅
+
+**Policy Enforcement:**
+- [x] `github-pr-policy-failed.png` - PR blocked by policy check failure
+- [x] `github-policy-report-comment.png` - Bot comment with violation details
+- [x] `github-workflow-details.png` - Workflow execution showing policy layers
+
+**Total Lab 6 screenshots: 3**
+
+**Demonstrates:**
+- Shift-left security (violations caught in CI/CD, not production)
+- Zero-cost policy enforcement ($0 GitHub Actions)
+- Automated feedback loop (developers see violations in PR)
+- Multi-layer defense (Format → TFLint → Checkov → OPA)
+
+**Impact:**
+- Exposure window: 17 minutes → 0 seconds
+- 90% of violations never reach AWS
+- Immediate developer feedback vs. post-deployment alerts
+
 ## Mermaid Example
 
 GitHub renders Mermaid diagrams directly in markdown. Add this to any README:
