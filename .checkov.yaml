@@ -39,3 +39,4 @@ download-external-modules: true
 hard-fail-on:
   - CRITICAL
   - HIGH
+  - MEDIUM
