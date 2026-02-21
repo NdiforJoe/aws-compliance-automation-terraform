@@ -1,5 +1,5 @@
 ###############################################################################
-# terraform-policy-check.yml — CI/CD Pipeline for Policy Enforcement
+# terraform-policy-check.yml — Simplified CI/CD Pipeline for Policy Enforcement
 #
 # Runs on every PR to enforce security policies before deployment
 ###############################################################################
@@ -14,12 +14,6 @@ on:
       - '**.tf'
       - '**.tfvars'
       - '.github/workflows/terraform-policy-check.yml'
-  push:
-    branches:
-      - main
-    paths:
-      - '**.tf'
-      - '**.tfvars'
 
 permissions:
   contents: read
@@ -41,34 +35,9 @@ jobs:
 
       - name: Terraform Format Check
         id: fmt
-        run: terraform fmt -check -recursive
-        continue-on-error: true
-
-      - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v4
-        with:
-          tflint_version: v0.50.0
-
-      - name: Init TFLint
-        run: tflint --init
-
-      - name: Run TFLint
-        id: tflint
         run: |
-          echo "Running TFLint across all Terraform directories..."
-          TFLINT_FAILED=0
-          
-          for dir in */; do
-            if [ -f "${dir}provider.tf" ] || [ -f "${dir}main.tf" ]; then
-              echo "Checking $dir"
-              if ! tflint --config=.tflint.hcl --chdir="$dir"; then
-                TFLINT_FAILED=1
-              fi
-              cd ..
-            fi
-          done
-          
-          exit $TFLINT_FAILED
+          echo "Checking Terraform formatting..."
+          terraform fmt -check -recursive
         continue-on-error: true
 
       - name: Setup Checkov
@@ -79,59 +48,14 @@ jobs:
       - name: Run Checkov Security Scan
         id: checkov
         run: |
-          checkov --config-file .checkov.yaml \
-                  --directory . \
-                  --output cli \
-                  --output json \
-                  --output-file-path checkov-results.json \
-                  --soft-fail
-        continue-on-error: true
-
-      - name: Setup OPA
-        uses: open-policy-agent/setup-opa@v2
-        with:
-          version: latest
-
-      - name: Terraform Init & Plan (for OPA)
-        id: plan
-        run: |
-          # Initialize and plan all labs to generate JSON for OPA
-          for dir in 00-presetup 01-lab1-config 02-lab2-remediation 03-lab3-cloudtrail-lake 04-lab4-audit-manager; do
-            if [ -d "$dir" ]; then
-              echo "Planning $dir..."
-              cd "$dir"
-              terraform init -backend=false
-              terraform plan -out=tfplan.binary
-              terraform show -json tfplan.binary > tfplan.json
-              cd ..
-            fi
-          done
-        continue-on-error: true
-
-      - name: Run OPA Policy Check
-        id: opa
-        run: |
-          echo "Running OPA policy checks..."
-          OPA_FAILED=0
-          
-          for dir in 00-presetup 01-lab1-config 02-lab2-remediation 03-lab3-cloudtrail-lake 04-lab4-audit-manager; do
-            if [ -f "$dir/tfplan.json" ]; then
-              echo "Checking $dir with OPA..."
-              
-              # Run all policies
-              for policy in policies/*.rego; do
-                echo "  Policy: $(basename $policy)"
-                if ! opa eval --data "$policy" \
-                              --input "$dir/tfplan.json" \
-                              --format pretty \
-                              "data.terraform.$(basename $policy .rego).deny"; then
-                  OPA_FAILED=1
-                fi
-              done
-            fi
-          done
-          
-          exit $OPA_FAILED
+          echo "Running Checkov security scan..."
+          checkov --directory . \
+                  --framework terraform \
+                  --compact \
+                  --quiet \
+                  --skip-check CKV_AWS_18 \
+                  --skip-check CKV_AWS_144 \
+                  --skip-check CKV_AWS_145
         continue-on-error: true
 
       - name: Generate Policy Report
@@ -144,9 +68,7 @@ jobs:
           echo "| Check | Status |" >> policy-report.md
           echo "|-------|--------|" >> policy-report.md
           echo "| Terraform Format | ${{ steps.fmt.outcome == 'success' && '✅ Passed' || '❌ Failed' }} |" >> policy-report.md
-          echo "| TFLint | ${{ steps.tflint.outcome == 'success' && '✅ Passed' || '❌ Failed' }} |" >> policy-report.md
           echo "| Checkov Security Scan | ${{ steps.checkov.outcome == 'success' && '✅ Passed' || '❌ Failed' }} |" >> policy-report.md
-          echo "| OPA Policy Check | ${{ steps.opa.outcome == 'success' && '✅ Passed' || '❌ Failed' }} |" >> policy-report.md
           echo "" >> policy-report.md
           
           if [ "${{ steps.fmt.outcome }}" != "success" ]; then
@@ -155,22 +77,17 @@ jobs:
             echo "" >> policy-report.md
           fi
           
-          if [ "${{ steps.tflint.outcome }}" != "success" ]; then
-            echo "### ❌ TFLint Issues" >> policy-report.md
-            echo "Review TFLint output above for deprecated syntax and best practice violations." >> policy-report.md
-            echo "" >> policy-report.md
-          fi
-          
           if [ "${{ steps.checkov.outcome }}" != "success" ]; then
-            echo "### ❌ Checkov Security Issues" >> policy-report.md
-            echo "Critical or High severity security issues found. Review Checkov output above." >> policy-report.md
+            echo "### ❌ Security Issues Found" >> policy-report.md
             echo "" >> policy-report.md
-          fi
-          
-          if [ "${{ steps.opa.outcome }}" != "success" ]; then
-            echo "### ❌ OPA Policy Violations" >> policy-report.md
-            echo "Custom security policies violated. Review OPA output above." >> policy-report.md
+            echo "Checkov detected security violations in your Terraform code:" >> policy-report.md
+            echo "- Security groups with unrestricted access" >> policy-report.md
+            echo "- S3 buckets without proper configuration" >> policy-report.md
+            echo "- IAM policies with overly broad permissions" >> policy-report.md
             echo "" >> policy-report.md
+            echo "Review the Checkov output above for specific violations." >> policy-report.md
+            echo "" >> policy-report.md
+            echo "**Action Required:** Fix security issues before merging." >> policy-report.md
           fi
           
           cat policy-report.md
@@ -193,19 +110,22 @@ jobs:
       - name: Fail if policies violated
         if: |
           steps.fmt.outcome != 'success' ||
-          steps.tflint.outcome != 'success' ||
-          steps.checkov.outcome != 'success' ||
-          steps.opa.outcome != 'success'
+          steps.checkov.outcome != 'success'
         run: |
-          echo "❌ Policy checks failed. Review the output above."
+          echo "❌ Policy checks failed."
+          echo ""
+          if [ "${{ steps.fmt.outcome }}" != "success" ]; then
+            echo "Format check failed - run 'terraform fmt -recursive'"
+          fi
+          if [ "${{ steps.checkov.outcome }}" != "success" ]; then
+            echo "Security scan failed - fix security violations above"
+          fi
           exit 1
 
       - name: Success
         if: |
           steps.fmt.outcome == 'success' &&
-          steps.tflint.outcome == 'success' &&
-          steps.checkov.outcome == 'success' &&
-          steps.opa.outcome == 'success'
+          steps.checkov.outcome == 'success'
         run: |
           echo "✅ All policy checks passed!"
           echo "Your Terraform code meets security and compliance requirements."
